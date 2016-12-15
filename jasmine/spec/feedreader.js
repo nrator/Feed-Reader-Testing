@@ -33,7 +33,7 @@ $(function() {
          it('each have defined non-empty URL', function() {
            for(var i = 0; i < allFeeds.length; i++) {
               expect(allFeeds[i].url).toBeDefined();
-              expect(allFeeds[i].url).not.toBe(null);
+              expect(allFeeds[i].url.length).not.toBe(0);
             }
          });
 
@@ -44,7 +44,7 @@ $(function() {
          it('each have defined non-empty name', function() {
            for(var i = 0; i < allFeeds.length; i++) {
               expect(allFeeds[i].name).toBeDefined();
-              expect(allFeeds[i].name).not.toBe(null);
+              expect(allFeeds[i].name.length).not.toBe(0);
             }
          });
     });
@@ -54,9 +54,9 @@ $(function() {
         beforeEach(function () {
           jasmine.addMatchers({
             toHaveClass: function () {
-              return {
+              return  {
                 compare: function (actual, className) {
-                return { pass: $(actual).hasClass(className) }
+                  return { pass: $(actual).hasClass(className) }
                 }
               }
             }
@@ -87,41 +87,36 @@ $(function() {
 
     describe('Initial Entries', function() {
         beforeEach(function(done) {
-            loadFeed(0, function() {
-              done();
-            });
+            loadFeed(0, done);
         });
         /* A test that ensures when the loadFeed
          * function is called and completes its work, there is at least
          * a single .entry element within the .feed container.
          */
-         it('can be loaded', function(done) {
-           expect($('.feed').find('.entry').length).not.toBeLessThan(1);
-           done();
+         it('can be loaded', function() {
+           expect($('.feed .entry').length).not.toBeLessThan(1);
          });
     });
 
     describe('New Feed Selection', function() {
         var feedContent, newFeedContent;
-        // call loadFeed and save the content
+
         beforeEach(function(done) {
+            // save original content
+            feedContent = $('.feed').children().text();
+            // call loadFeed again and save new content
             loadFeed(1, function() {
+              newFeedContent = $('.feed').children().text();
               done();
             });
-            feedContent = $('.feed').children().text();
         });
         /* A test that ensures when a new feed is loaded
          * by the loadFeed function that the content actually changes.
          */
          it('changes content', function() {
-           // call loadFeed again and compare the new content with old one
-           var loadNewFeed = function(done) {
-               loadFeed(3, function() {
-                 done();
-               });
-           };
-           newFeedContent = $('.feed').children().text();
-           expect(newFeedContent).not.toMatch(feedContent);
+           //console.log("0: ",feedContent);
+           //console.log("1: ",newFeedContent);
+           expect(newFeedContent).not.toBe(feedContent);
          });
     });
 }());
